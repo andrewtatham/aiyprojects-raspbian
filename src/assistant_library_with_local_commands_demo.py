@@ -25,6 +25,7 @@ It is available for Raspberry Pi 2/3 only; Pi Zero is not supported.
 """
 
 import logging
+import random
 import subprocess
 import sys
 
@@ -33,6 +34,7 @@ import aiy.audio
 import aiy.voicehat
 from google.assistant.library import Assistant
 from google.assistant.library.event import EventType
+import swearing
 
 logging.basicConfig(
     level=logging.INFO,
@@ -53,6 +55,15 @@ def reboot_pi():
 def say_ip():
     ip_address = subprocess.check_output("hostname -I | cut -d' ' -f1", shell=True)
     aiy.audio.say('My IP address is %s' % ip_address.decode('utf-8'))
+
+
+def update():
+    subprocess.call('cd /home/pi/AIY-voice-kit-python/src ; git pull --rebase : sudo reboot', shell=True)
+
+
+def do_a_swear():
+    swear = random.choice(swearing.swears)
+    aiy.audio.say(swear)
 
 
 def process_event(assistant, event):
@@ -77,6 +88,12 @@ def process_event(assistant, event):
         elif text == 'ip address':
             assistant.stop_conversation()
             say_ip()
+        elif text == 'update':
+            assistant.stop_conversation()
+            update()
+        elif text == 'swear':
+            assistant.stop_conversation()
+            do_a_swear()
 
     elif event.type == EventType.ON_END_OF_UTTERANCE:
         status_ui.status('thinking')
