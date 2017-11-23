@@ -69,7 +69,7 @@ def do_a_swear(*args):
 
 def ping(*args):
     match = args[0]
-    hostname = match.group("hostname")
+    hostname = match.group("hostname").replace(" ", "")
     if hostname:
         inputy = "ping {}".format(hostname)
         print(inputy)
@@ -97,7 +97,7 @@ commands = [
     Command("ip address", say_ip),
     Command("update", update),
     Command("swear", do_a_swear),
-    Command("ping (?P<hostname>[\w]+", ping)
+    Command("ping (?P<hostname>[\w\s]+", ping)
 ]
 
 
