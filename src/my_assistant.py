@@ -97,7 +97,7 @@ commands = [
     Command("ip address", say_ip),
     Command("update", update),
     Command("swear", do_a_swear),
-    Command("ping (?P<hostname>[\w\s]+", ping)
+    Command("ping (?P<hostname>[\w\s]+)", ping)
 ]
 
 
