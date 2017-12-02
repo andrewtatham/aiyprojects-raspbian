@@ -80,7 +80,11 @@ def ping(*args):
 
 
 class Command(object):
-    def __init__(self, regex, func):
+    def __init__(self, regex, func, expected_phrases=None):
+        if expected_phrases:
+            self._expected_phrases = expected_phrases
+        else:
+            self._expected_phrases = [regex]
         self._regex = re.compile(regex, re.IGNORECASE)
         self._func = func
 
@@ -90,14 +94,19 @@ class Command(object):
             assistant.stop_conversation()
             self._func(match)
 
+    @property
+    def expected_phrases(self):
+        return self._expected_phrases
 
+
+hostnames = ["andrewtathampi", "andrewtathampi2", "andrewdesktop", "scrollbot", "mediacentre"]
 commands = [
     Command("power off", power_off_pi),
     Command("reboot", reboot_pi),
     Command("ip address", say_ip),
     Command("update", update),
     Command("swear", do_a_swear),
-    Command("ping (?P<hostname>[\w\s]+", ping)
+    Command("ping (?P<hostname>[\w\s]+", ping, map(lambda hostname: "ping " + hostname, hostnames))
 ]
 
 
@@ -133,8 +142,12 @@ def process_event(assistant, event):
 
 
 def main():
+    expected_phrases = []
+    for command in commands:
+        expected_phrases.extend(command.expected_phrases)
     credentials = aiy.assistant.auth_helpers.get_assistant_credentials()
     with Assistant(credentials) as assistant:
+        assistant.add_phrases(expected_phrases)
         for event in assistant.start():
             process_event(assistant, event)
 
