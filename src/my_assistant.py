@@ -30,10 +30,11 @@ import random
 import subprocess
 import sys
 import re
-import aiy.assistant.auth_helpers
 import aiy.audio
 import aiy.voicehat
-from google.assistant.library import Assistant
+# from google.assistant.library import Assistant
+import aiy.assistant.auth_helpers
+import aiy.assistant.grpc
 from google.assistant.library.event import EventType
 import swearing
 
@@ -99,7 +100,13 @@ class Command(object):
         return self._expected_phrases
 
 
-hostnames = ["andrewtathampi", "andrewtathampi2", "andrewdesktop", "scrollbot", "mediacentre"]
+hostnames = [
+    "andrewtathampi",
+    "andrewtathampi2",
+    "andrewdesktop",
+    "scrollbot",
+    "mediacentre"
+]
 commands = [
     Command("power off", power_off_pi),
     Command("reboot", reboot_pi),
@@ -145,11 +152,14 @@ def main():
     expected_phrases = []
     for command in commands:
         expected_phrases.extend(command.expected_phrases)
-    credentials = aiy.assistant.auth_helpers.get_assistant_credentials()
-    with Assistant(credentials) as assistant:
-        assistant.add_phrases(expected_phrases)
-        for event in assistant.start():
-            process_event(assistant, event)
+
+    # credentials = aiy.assistant.auth_helpers.get_assistant_credentials()
+    # with Assistant(credentials) as assistant:
+
+    assistant = aiy.assistant.grpc.get_assistant()
+    assistant.add_phrases(expected_phrases)
+    for event in assistant.start():
+        process_event(assistant, event)
 
 
 if __name__ == '__main__':
