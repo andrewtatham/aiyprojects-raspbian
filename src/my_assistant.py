@@ -157,7 +157,8 @@ def main():
     # with Assistant(credentials) as assistant:
 
     assistant = aiy.assistant.grpc.get_assistant()
-    assistant._request.add_phrases(expected_phrases)
+    for expected_phrase in expected_phrases:
+        assistant._request.add_phrase(expected_phrase)
     for event in assistant.start():
         process_event(assistant, event)
 
