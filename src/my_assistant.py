@@ -32,7 +32,7 @@ import sys
 import re
 import aiy.audio
 import aiy.voicehat
-# from google.assistant.library import Assistant
+from google.assistant.library import Assistant
 import aiy.assistant.auth_helpers
 import aiy.assistant.grpc
 from google.assistant.library.event import EventType
@@ -153,14 +153,12 @@ def main():
     for command in commands:
         expected_phrases.extend(command.expected_phrases)
 
-    # credentials = aiy.assistant.auth_helpers.get_assistant_credentials()
-    # with Assistant(credentials) as assistant:
-
-    assistant = aiy.assistant.grpc.get_assistant()
-    for expected_phrase in expected_phrases:
-        assistant._request.add_phrase(expected_phrase)
-    for event in assistant.start():
-        process_event(assistant, event)
+    credentials = aiy.assistant.auth_helpers.get_assistant_credentials()
+    with Assistant(credentials) as assistant:
+        for expected_phrase in expected_phrases:
+            assistant._request.add_phrase(expected_phrase)
+        for event in assistant.start():
+            process_event(assistant, event)
 
 
 if __name__ == '__main__':
