@@ -106,7 +106,7 @@ commands = [
     Command("ip address", say_ip),
     Command("update", update),
     Command("swear", do_a_swear),
-    Command("ping (?P<hostname>[\w\s]+", ping, map(lambda hostname: "ping " + hostname, hostnames))
+    Command("ping (?P<hostname>[\w\s]+)", ping, map(lambda hostname: "ping " + hostname, hostnames))
 ]
 
 
